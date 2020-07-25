@@ -76,7 +76,12 @@ inquirer.prompt([
 {
     name: "beginning",
     type: "number",
-    message: "ending position?"
+    message: "beginning position",
+
+},{
+    name: "end",
+    type: "number",
+    message:"end position",
 }
 ]).then(answers => {
     connection.query("SELECT position, artist, song, year FROM top5000 WHERE position BETWEEN ? AND ?",[answers.beginning, answers.end], (err, results) => {
