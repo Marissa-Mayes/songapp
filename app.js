@@ -28,17 +28,16 @@ function initialPrompts(){
             case "ARTIST SEARCH":
              artistsearch()
             break
-            case "MULTI SEARCH":
-                multisearch()
-                 break
+                case "MULTI SEARCH":
+             multisearch()
+            break
                 case "RANGE SEARCH":
-                  rangeSearch()
-                  break
-                    case "SONG SEARCH":
-                    songSearch()
-                    case "Exit":
-                    exit()
-
+            rangeSearch()
+            break
+                case "SONG SEARCH":
+            songSearch()
+                case "Exit":
+             exit()
             default:
             connection.end()
             process.exit()
@@ -52,10 +51,20 @@ function initialPrompts(){
     })
 }
     function artistsearch(){
-        console.log("searching artist ...")
-        initialPrompts()
-       
-    }
+      inquirer.prompt([{
+          message: "which artist are you looking for?",
+          name: "artist",
+      }]).then(answer =>{
+          connection.query(
+              "SELECT position, artist, song, year FROM top5000 WHERE ?",{artist: answer.artist},
+          (err,results) =>{
+              if (err) throw err
+              console.table(results)
+              initialPrompts()
+            }
+          )  
+    })
+}
 
 function multisearch(){
 console.log("multiSearch")
@@ -63,8 +72,21 @@ initialPrompts()
 }
 
 function rangeSearch(){
-console.log("range search..")
-initialPrompts()
+inquirer.prompt([
+{
+    name: "beginning",
+    type: "number",
+    message: "ending position?"
+}
+]).then(answers => {
+    connection.query("SELECT position, artist, song, year FROM top5000 WHERE position BETWEEN ? AND ?",[answers.beginning, answers.end], (err, results) => {
+        if (err) throw err
+        console.table (results)
+    }
+    )
+    initialPrompts()
+})
+
 }
 
 function songSearch(){
